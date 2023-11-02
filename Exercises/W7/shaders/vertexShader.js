@@ -1,6 +1,5 @@
 export default `
   attribute vec4 aVertexPosition;
-  attribute vec4 aVertexColor;
   attribute vec3 aVertexNormal;
 
   uniform mat4 uModelViewMatrix;
@@ -34,7 +33,7 @@ export default `
     // === very simplistic lighting model ===
     float ambientIntensity = 0.4; // controls how much ambient light there is in the scene, some value between 0.0 and 1.0
     float diffuseIntensity = computeDiffuseIntens(aVertexPosition, aVertexNormal, uLightPos); // accounts for direct light
-    vColor = aVertexColor * (diffuseIntensity + ambientIntensity);
+    vColor = vec4(0.3, 0.3, 0.3, 1.0) * (diffuseIntensity + ambientIntensity);
     
     // make sure we don't overshoot
     vColor = clamp(vColor, 0.0, 1.0);
