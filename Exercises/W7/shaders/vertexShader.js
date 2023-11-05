@@ -1,4 +1,4 @@
-export default `
+export default /*glsl*/ `
   attribute vec4 aVertexPosition;
   attribute vec3 aVertexNormal;
 

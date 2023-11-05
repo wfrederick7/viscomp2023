@@ -24,6 +24,7 @@ function main() {
   }
 
   // Initialize the GL context
+  /** @type {WebGLRenderingContext} */
   const gl = canvas.getContext("webgl"); // use "experimental-webgl" for Edge browser
 
   // Only continue if WebGL is available and working
