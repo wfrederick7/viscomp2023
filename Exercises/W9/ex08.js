@@ -46,6 +46,8 @@ attribute vec4 aVertexPosition;
 attribute vec4 aVertexColor;
 attribute vec3 aVertexNormal;
 
+uniform mat4 uModelMatrix;
+uniform mat4 uModelNormalMatrix;
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform vec4 uLightPos;
@@ -55,8 +57,8 @@ varying lowp vec4 vColor;
 float computeDiffuseIntens(in vec4 position, in vec3 normal, in vec4 lightPos)
 {
   // since the lightPos is in world coordinates, need to transform the vertex position and normal first
-  position = uModelViewMatrix * position;
-  normal = (uModelViewMatrix * vec4(normal, 0.0)).xyz;
+  position = uModelMatrix * position;
+  normal = (uModelNormalMatrix * vec4(normal, 0.0)).xyz;
   normal = normalize(normal);    
   
   // compute the light direction
@@ -106,14 +108,23 @@ var shaderPrograms = [floorShaderProgram, objectShaderProgram];
 
 // Helper for setting the projection, view, and model matrices (and optionally the light position)
 function setPVM(P, V, M, lightPos=null) { 
-  let VM = mat4.create();
-  mat4.multiply(VM, V, M);
+  let VM = mat4.create(); // uModelViewMatrix
+  mat4.multiply(VM, V, M); 
+
+  let Mn = mat4.create(); // uModelNormalMatrix
+  mat4.invert(Mn, M);
+  mat4.transpose(Mn, Mn);
+  
   shaderPrograms.forEach(shaderProgram => {
       gl.useProgram(shaderProgram);
-      const uProjectionMatrix = gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
+      const uModelMatrix = gl.getUniformLocation(shaderProgram, 'uModelMatrix');
+      const uModelNormalMatrix = gl.getUniformLocation(shaderProgram, 'uModelNormalMatrix');
       const uModelViewMatrix  = gl.getUniformLocation(shaderProgram, 'uModelViewMatrix');
-      gl.uniformMatrix4fv(uProjectionMatrix, false, P);
+      const uProjectionMatrix = gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
+      gl.uniformMatrix4fv(uModelMatrix, false, M);
+      gl.uniformMatrix4fv(uModelNormalMatrix, false, Mn);
       gl.uniformMatrix4fv(uModelViewMatrix, false, VM);
+      gl.uniformMatrix4fv(uProjectionMatrix, false, P);
 
       if (lightPos != null) {
         const uLightPos = gl.getUniformLocation(shaderProgram, 'uLightPos');
@@ -254,7 +265,7 @@ function getCameraMatrix() {
   // Calculate the camera matrix (see the ModelView transform from the lecture slides)
   let TR = mat4.create();
   
-  // Hints: use mat4.targetTo(TR, eye, target, upvec) and the variables defined in lines 130-132
+  // Hints: use mat4.targetTo(TR, eye, target, upvec) and the variables defined in lines 141-143
   // 'eye' is the camera position
   // 'target' is where the camera points at
   // 'upvec' is to ensure that the camera is oriented upwards
@@ -281,7 +292,7 @@ function getModelMatrix() {
   // Calculate the model matrix
   let M = mat4.create();
 
-  // Hint: take a look at the object variables in lines 136-138.
+  // Hint: take a look at the object variables in lines 146-148.
   // Construct the model matrix by applying the corresponding transformations in that order
   // such that a point is first rotated, then translated, then scaled (keep in mind that the first transformation is applied last)
   // Helpful functions: mat4.rotateX(...), mat4.translate(...), mat4.scale(...)
