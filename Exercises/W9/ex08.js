@@ -205,7 +205,7 @@ function rotateCameraY(angle) {
 function rotateCameraX(angle) {
 
   // Rotate the camera by 'angle' around the x-axis.
-  // Hint: use vec.rotateY(...) (what's the origin of rotation?)
+  // Hint: use vec.rotateX(...) (what's the origin of rotation?)
  
   // ...
 
