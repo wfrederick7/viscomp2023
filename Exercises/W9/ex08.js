@@ -241,8 +241,8 @@ function processKeyPressed(){
         case 'KeyS': moveCamera(-0.1, false); break;
         case 'KeyA': moveCamera(0.1, true); break;
         case 'KeyD': moveCamera(-0.1, true); break;
-        case 'KeyE': rotateCameraY(0.02); break;
-        case 'KeyQ': rotateCameraY(-0.02); break;
+        case 'KeyE': rotateCameraY(-0.02); break;
+        case 'KeyQ': rotateCameraY(0.02); break;
         case 'KeyI': moveLight([0, 0, -1]); break;
         case 'KeyK': moveLight([0, 0, 1]); break;
         case 'KeyL': moveLight([1, 0, 0]); break;
